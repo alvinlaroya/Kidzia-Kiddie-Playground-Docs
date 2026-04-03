@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kidzia Kiddie Playground — Documentation</title>
+  <style>
+    /* ─── Reset & Base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --purple:       #7c3aed;
+      --purple-light: #ede9fe;
+      --purple-dark:  #5b21b6;
+      --cyan:         #0ea5e9;
+      --cyan-light:   #e0f2fe;
+      --cyan-dark:    #0369a1;
+      --green:        #10b981;
+      --amber:        #f59e0b;
+      --red:          #ef4444;
+      --gray-50:      #f9fafb;
+      --gray-100:     #f3f4f6;
+      --gray-200:     #e5e7eb;
+      --gray-300:     #d1d5db;
+      --gray-500:     #6b7280;
+      --gray-700:     #374151;
+      --gray-900:     #111827;
+      --sidebar-w:    280px;
+      --header-h:     64px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gray-900);
+      background: var(--gray-50);
+      line-height: 1.6;
+    }
+    a { color: var(--purple); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+    pre {
+      background: var(--gray-900);
+      color: #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; }
+    h1, h2, h3, h4 { line-height: 1.3; }
+
+    /* ─── Top Header ────────────────────────────────────────────── */
+    .top-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      gap: 12px;
+    }
+    .logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .logo-text { font-size: 1.1rem; font-weight: 700; color: var(--gray-900); }
+    .logo-text span { color: var(--purple); }
+    .header-badge {
+      margin-left: auto;
+      background: var(--purple-light);
+      color: var(--purple);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ─── Sidebar ───────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: var(--header-h); left: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - var(--header-h));
+      background: white;
+      border-right: 1px solid var(--gray-200);
+      overflow-y: auto;
+      padding: 20px 0;
+      z-index: 90;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+    .nav-section { padding: 8px 16px 4px; }
+    .nav-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-500);
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+    .nav-link:hover { background: var(--gray-50); text-decoration: none; color: var(--purple); }
+    .nav-link.active { background: var(--purple-light); color: var(--purple); font-weight: 600; border-right: 3px solid var(--purple); }
+    .nav-link .icon { width: 16px; text-align: center; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .badge-admin  { background: var(--purple-light); color: var(--purple); }
+    .badge-branch { background: var(--cyan-light); color: var(--cyan-dark); }
+
+    /* ─── Main Content ──────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--header-h);
+      padding: 40px 48px;
+      max-width: 960px;
+    }
+
+    /* ─── Sections ──────────────────────────────────────────────── */
+    .section { margin-bottom: 64px; scroll-margin-top: calc(var(--header-h) + 24px); }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--gray-500);
+      margin-bottom: 28px;
+    }
+    .divider { height: 1px; background: var(--gray-200); margin: 32px 0; }
+
+    /* ─── Hero Banner ────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--purple) 0%, #6d28d9 50%, var(--cyan) 100%);
+      border-radius: 16px;
+      padding: 48px 40px;
+      color: white;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: 40%;
+      width: 260px; height: 260px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+    .hero p { font-size: 1.05rem; opacity: 0.9; max-width: 600px; margin-bottom: 24px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-tag {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ─── Cards ─────────────────────────────────────────────────── */
+    .card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-desc { font-size: 0.9rem; color: var(--gray-500); }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* ─── Screenshot Placeholder ─────────────────────────────────── */
+    .screenshot {
+      width: 100%;
+      border: 2px dashed var(--gray-300);
+      border-radius: 12px;
+      background: var(--gray-50);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px 20px;
+      margin: 20px 0;
+      color: var(--gray-500);
+      text-align: center;
+      min-height: 220px;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .screenshot:hover { border-color: var(--purple); background: var(--purple-light); }
+    .screenshot-icon { font-size: 2.5rem; }
+    .screenshot-label { font-weight: 700; font-size: 0.95rem; color: var(--gray-700); }
+    .screenshot-hint { font-size: 0.8rem; color: var(--gray-400); }
+    .screenshot-tag {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+    .screenshot-tag.admin  { background: var(--purple-light); color: var(--purple); }
+    .screenshot-tag.branch { background: var(--cyan-light); color: var(--cyan-dark); }
+    .screenshot-tag.shared { background: #dcfce7; color: #166534; }
+    .screenshot input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .screenshot-filled {
+      border: none;
+      background: transparent;
+      padding: 0;
+      min-height: unset;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .screenshot-filled:hover { border-color: transparent; background: transparent; }
+    .screenshot-filled .screenshot-inner {
+      position: relative;
+      max-width: 280px;
+      width: 100%;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .screenshot-filled img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screenshot-caption {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-align: center;
+    }
+    .screenshot-filled .screenshot-tag {
+      top: 8px; right: 8px;
+    }
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .screenshot-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .screenshot-grid .screenshot {
+      margin: 0;
+      min-height: unset;
+    }
+    .screenshot-grid .screenshot-filled {
+      margin: 0;
+    }
+    @media (max-width: 700px) {
+      .screenshot-grid, .screenshot-grid.cols-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Tables ─────────────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--gray-700);
+    }
+    td {
+      border: 1px solid var(--gray-200);
+      padding: 10px 14px;
+      color: var(--gray-700);
+      vertical-align: top;
+    }
+    tr:hover td { background: var(--gray-50); }
+
+    /* ─── Callouts ──────────────────────────────────────────────── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+    .callout-info { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+    .callout-tip  { background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; }
+    .callout-warn { background: #fffbeb; border-left: 4px solid var(--amber); color: #92400e; }
+    .callout strong { font-weight: 700; }
+
+    /* ─── Badge List ─────────────────────────────────────────────── */
+    .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+    .badge-cyan   { background: var(--cyan-light); color: var(--cyan-dark); }
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-gray   { background: var(--gray-100); color: var(--gray-700); }
+    .badge-amber  { background: #fef3c7; color: #92400e; }
+
+    /* ─── Feature Checklist ──────────────────────────────────────── */
+    .feature-list { list-style: none; display: grid; gap: 8px; }
+    .feature-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--gray-700); }
+    .feature-list li::before { content: '✅'; flex-shrink: 0; }
+
+    /* ─── DB Entity ─────────────────────────────────────────────── */
+    .db-entity {
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .db-entity-header {
+      background: var(--gray-900);
+      color: white;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .db-entity-fields { padding: 12px 16px; display: grid; gap: 4px; }
+    .db-field { display: flex; gap: 8px; font-size: 0.82rem; padding: 4px 0; border-bottom: 1px solid var(--gray-100); }
+    .db-field:last-child { border-bottom: none; }
+    .field-name { font-weight: 600; color: var(--gray-900); min-width: 180px; }
+    .field-type { color: var(--cyan-dark); font-family: monospace; min-width: 120px; }
+    .field-desc { color: var(--gray-500); }
+
+    /* ─── Migration Timeline ─────────────────────────────────────── */
+    .timeline { position: relative; padding-left: 24px; }
+    .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--gray-200); }
+    .timeline-item { position: relative; margin-bottom: 16px; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -20px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--purple); border: 2px solid white;
+      box-shadow: 0 0 0 2px var(--purple);
+    }
+    .timeline-title { font-weight: 700; font-size: 0.9rem; }
+    .timeline-desc  { font-size: 0.82rem; color: var(--gray-500); margin-top: 2px; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px; }
+      .card-grid, .card-grid.three { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ TOP HEADER ═══════════════════════════════════════════════════ -->
+<header class="top-header">
+  <div class="logo">K</div>
+  <span class="logo-text"><span>Kidzia</span> Kiddie Playground</span>
+  <span class="header-badge">Documentation v1.0</span>
+</header>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════════════ -->
+<nav class="sidebar">
+
+  <div class="nav-section"><span class="nav-section-label">Getting Started</span></div>
+  <a href="#overview"     class="nav-link active"><span class="icon">🏠</span> Overview</a>
+  <a href="#architecture" class="nav-link"><span class="icon">🏗️</span> Architecture</a>
+  <a href="#tech-stack"   class="nav-link"><span class="icon">⚙️</span> Tech Stack</a>
+  <div class="nav-section" style="margin-top:12px"><span class="nav-section-label">Admin App</span></div>
+  <a href="#admin-overview"  class="nav-link"><span class="icon">🟣</span> Overview <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-login"     class="nav-link"><span class="icon">🔐</span> Login <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-dashboard" class="nav-link"><span class="icon">📊</span> Dashboard <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-branches"  class="nav-link"><span class="icon">🏢</span> Branches <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-employees" class="nav-link"><span class="icon">👥</span> Employees <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-pricing"   class="nav-link"><span class="icon">💰</span> Pricing <span class="nav-badge badge-admin">Admin</span></a>
+  <a href="#admin-reports"   class="nav-link"><span class="icon">📄</span> Reports <span class="nav-badge badge-admin">Admin</span></a>
+
+  <div class="nav-section" style="margin-top:12px"><span class="nav-section-label">Branch App</span></div>
+  <a href="#branch-overview" class="nav-link"><span class="icon">🔵</span> Overview <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-login"    class="nav-link"><span class="icon">🔐</span> Login <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-active"   class="nav-link"><span class="icon">🎯</span> Active Sessions <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-checkin"  class="nav-link"><span class="icon">✅</span> Check-in <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-history"  class="nav-link"><span class="icon">📋</span> History <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-socks"    class="nav-link"><span class="icon">🧦</span> Socks POS <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-stocks"   class="nav-link"><span class="icon">📦</span> Stocks <span class="nav-badge badge-branch">Branch</span></a>
+  <a href="#branch-reports"  class="nav-link"><span class="icon">📄</span> Reports <span class="nav-badge badge-branch">Branch</span></a>
+
+  <div class="nav-section" style="margin-top:12px"><span class="nav-section-label">Backend</span></div>
+  <a href="#database"      class="nav-link"><span class="icon">🗄️</span> Database Schema</a>
+  <a href="#migrations"    class="nav-link"><span class="icon">🔄</span> Migrations</a>
+  <a href="#db-functions"  class="nav-link"><span class="icon">⚡</span> DB Functions</a>
+  <a href="#auth"          class="nav-link"><span class="icon">🔑</span> Auth &amp; Security</a>
+  <a href="#notifications" class="nav-link"><span class="icon">🔔</span> Notifications</a>
+
+</nav>
+
+<!-- ══ MAIN CONTENT ═════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>🎪 Kidzia Kiddie Playground</h1>
+    <p>Complete management system for children's indoor play facilities — check-ins, POS, inventory, analytics, and reporting in one platform.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">React Native</span>
+      <span class="hero-tag">Expo</span>
+      <span class="hero-tag">Supabase</span>
+      <span class="hero-tag">TypeScript</span>
+      <span class="hero-tag">Turbo Monorepo</span>
+      <span class="hero-tag">Firebase Push</span>
+    </div>
+  </div>
+
+  <!-- ══ OVERVIEW ══════════════════════════════════════════════════ -->
+  <section id="overview" class="section">
+    <h2 class="section-title">Overview</h2>
+    <p class="section-subtitle">What Kidzia is, who it's for, and what it solves.</p>
+
+    <p style="margin-bottom:16px;color:var(--gray-700)">
+      <strong>Kidzia Kiddie Playground</strong> is a full-stack management platform built for
+      children's indoor play facilities (trampoline parks, play zones). It replaces pen-and-paper
+      operations with a real-time digital system covering check-ins, POS sales, inventory,
+      multi-branch analytics, and PDF reporting.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">🟣 Admin Dashboard</div>
+        <div class="card-desc">Super admin app for managing branches, staff, pricing tiers, loyalty cards, and viewing cross-branch analytics and revenue charts.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔵 Branch Staff App</div>
+        <div class="card-desc">Frontline operations app — check kids in/out, manage sessions, sell socks via POS, track stock, and export daily reports.</div>
+      </div>
+    </div>
+
+    <h3 style="margin:24px 0 12px;font-size:1.1rem">Key Capabilities</h3>
+    <div class="card-grid three">
+      <div class="card"><div class="card-title">⏱️ Session Tracking</div><div class="card-desc">Real-time timers, multiple pricing tiers, loyalty discounts, and one-tap checkout.</div></div>
+      <div class="card"><div class="card-title">🧦 Socks POS</div><div class="card-desc">Point-of-sale for sock variants with inventory adjustment and daily sales summaries.</div></div>
+      <div class="card"><div class="card-title">📊 Analytics</div><div class="card-desc">Revenue charts, KPI cards, payment breakdowns, and multi-branch filtering.</div></div>
+      <div class="card"><div class="card-title">📄 PDF Reports</div><div class="card-desc">Generate and share daily branch reports with full session and sales breakdown.</div></div>
+      <div class="card"><div class="card-title">🔔 Notifications</div><div class="card-desc">Push notifications via Firebase for session timeout alerts sent to staff devices.</div></div>
+      <div class="card"><div class="card-title">🏢 Multi-branch</div><div class="card-desc">Independent pricing, staff, and reports per branch under one admin account.</div></div>
+    </div>
+  </section>
+
+  <!-- ══ ARCHITECTURE ══════════════════════════════════════════════ -->
+  <section id="architecture" class="section">
+    <h2 class="section-title">Architecture</h2>
+    <p class="section-subtitle">Monorepo structure and system design.</p>
+
+    <pre><code>kidzia-kiddie-playground/          ← pnpm monorepo (Turbo)
+├── apps/
+│   ├── admin/                     ← Super admin app (Expo, purple theme)
+│   │   ├── app/(auth)/            ← login, accept-invite, unauthorized
+│   │   ├── app/(tabs)/            ← dashboard, branches, employees, pricing, reports, profile
+│   │   ├── components/            ← RevenueChart, MonthlyRevenueChart, VisitsChart, SecurityGate
+│   │   └── stores/                ← authStore, dashboardStore, sessionsStore, ...
+│   │
+│   └── branch/                    ← Branch staff app (Expo, cyan theme)
+│       ├── app/(auth)/            ← login, accept-invite, unauthorized
+│       ├── app/(tabs)/            ← active, checkin, history, socks, stocks, reports, profile
+│       ├── components/            ← SessionTimer, NotificationBanner
+│       └── stores/                ← authStore, sessionsStore, socksStore, promoStore
+│
+├── packages/
+│   └── supabase/src/              ← Shared backend client &amp; types
+│       ├── client.ts              ← Supabase client (chunked secure token storage)
+│       ├── types.ts               ← TypeScript DB types for all tables
+│       └── schemas.ts             ← Zod validation schemas
+│
+└── supabase/migrations/           ← SQL schema migrations (0001–0010)</code></pre>
+
+    <h3 style="margin:24px 0 10px;font-size:1rem;font-weight:700">Data Flow</h3>
+    <div class="callout callout-info">
+      <div>
+        <strong>Apps → packages/supabase →</strong> Supabase (PostgreSQL + Auth + Realtime).
+        Both apps import the shared <code>@kidzia/supabase</code> package for all database
+        operations, ensuring consistent types and validation across the codebase.
+      </div>
+    </div>
+
+    <table style="margin-top:16px">
+      <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Mobile / Web UI</td><td>React Native + Expo</td><td>Cross-platform apps (iOS, Android, Web)</td></tr>
+        <tr><td>Routing</td><td>Expo Router v6</td><td>File-based navigation with auth guards</td></tr>
+        <tr><td>State</td><td>Zustand</td><td>Local app state management</td></tr>
+        <tr><td>Backend</td><td>Supabase (PostgreSQL)</td><td>Auth, database, row-level security, realtime</td></tr>
+        <tr><td>Push Notifications</td><td>Firebase + Expo Notifications</td><td>Session timeout alerts to staff</td></tr>
+        <tr><td>Secure Storage</td><td>Expo Secure Store</td><td>JWT session persistence on device</td></tr>
+        <tr><td>Build</td><td>Turbo + pnpm</td><td>Monorepo task orchestration</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══ TECH STACK ════════════════════════════════════════════════ -->
+  <section id="tech-stack" class="section">
+    <h2 class="section-title">Tech Stack</h2>
+    <p class="section-subtitle">Every library and tool used across the monorepo.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">📱 Frontend</div>
+        <div class="badge-list">
+          <span class="badge badge-purple">React 19</span>
+          <span class="badge badge-purple">React Native 0.81</span>
+          <span class="badge badge-purple">Expo 54</span>
+          <span class="badge badge-purple">Expo Router v6</span>
+          <span class="badge badge-gray">NativeWind 4</span>
+          <span class="badge badge-gray">Tailwind CSS</span>
+          <span class="badge badge-gray">Zustand 5</span>
+          <span class="badge badge-gray">React Hook Form</span>
+          <span class="badge badge-gray">Zod</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🗄️ Backend</div>
+        <div class="badge-list">
+          <span class="badge badge-green">Supabase</span>
+          <span class="badge badge-green">PostgreSQL</span>
+          <span class="badge badge-green">Supabase Auth</span>
+          <span class="badge badge-green">Row-Level Security</span>
+          <span class="badge badge-green">Supabase Realtime</span>
+          <span class="badge badge-green">PostgreSQL Functions</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔔 Notifications &amp; Auth</div>
+        <div class="badge-list">
+          <span class="badge badge-amber">Firebase FCM</span>
+          <span class="badge badge-amber">Expo Notifications</span>
+          <span class="badge badge-amber">Expo Secure Store</span>
+          <span class="badge badge-amber">JWT (Supabase Auth)</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛠️ Dev &amp; Build</div>
+        <div class="badge-list">
+          <span class="badge badge-cyan">TypeScript 5.7</span>
+          <span class="badge badge-cyan">pnpm 10</span>
+          <span class="badge badge-cyan">Turbo 2.3</span>
+          <span class="badge badge-cyan">ESLint 9</span>
+          <span class="badge badge-cyan">Prettier 3</span>
+          <span class="badge badge-cyan">Node 20+</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ADMIN APP═════════════════════════════════════════════════ -->
+  <section id="admin-overview" class="section">
+    <h2 class="section-title" style="color:var(--purple)">🟣 Admin App</h2>
+    <p class="section-subtitle">Super admin dashboard for system-wide management.</p>
+
+    <div class="card" style="border-left:4px solid var(--purple)">
+      <div class="card-title">Bundle: <code>com.kidzia.admin</code> &nbsp;·&nbsp; Theme: Purple (#7c3aed)</div>
+      <div class="card-desc">Runs on iOS, Android, and Web via Expo. Accessible only to users with the <code>super_admin</code> role.</div>
+    </div>
+
+    <h3 style="margin:20px 0 12px;font-size:1.05rem;font-weight:700">Admin Features</h3>
+    <ul class="feature-list">
+      <li>Multi-branch management (create, edit, deactivate)</li>
+      <li>Staff employee accounts with role assignment and branch assignment</li>
+      <li>Per-branch pricing tiers with versioned effective dates</li>
+      <li>Real-time dashboard KPIs and revenue charts</li>
+      <li>PDF report generation with custom date ranges</li>
+      <li>Loyalty card management (create, assign discount percentages)</li>
+      <li>Security mode to hide sensitive financial data on screen</li>
+      <li>Accept staff invite links for onboarding</li>
+    </ul>
+
+    <div class="screenshot screenshot-filled">
+      <div class="screenshot-inner">
+        <img src="screenshot/admin tab navigation.png" alt="Admin App — Tab Navigation Overview" />
+        <span class="screenshot-tag admin">Admin</span>
+      </div>
+      <div class="screenshot-caption">Admin App — Tab Navigation Overview</div>
+    </div>
+  </section>
+
+  <!-- Admin Login -->
+  <section id="admin-login" class="section">
+    <h2 class="section-title">Admin — Login</h2>
+    <p class="section-subtitle">Authentication screen for super admins.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Email + password login via Supabase Auth</li>
+      <li>Accept invite link for new admin onboarding</li>
+      <li>Redirect to dashboard on successful login</li>
+      <li>Role check — non-admins are redirected to Unauthorized screen</li>
+    </ul>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-login-screen.png" alt="Admin — Login Screen" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin — Login Screen</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-set-pass-screen.png" alt="Admin — Accept Invite / Set Password Screen" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin — Accept Invite / Set Password Screen</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Dashboard -->
+  <section id="admin-dashboard" class="section">
+    <h2 class="section-title">Admin — Dashboard</h2>
+    <p class="section-subtitle">Real-time KPIs, revenue charts, and session overview.</p>
+
+    <h3 style="margin-bottom:10px;font-size:1rem;font-weight:700">KPI Cards</h3>
+    <div class="card-grid three">
+      <div class="card"><div class="card-title">🔴 Active Sessions</div><div class="card-desc">Count of currently checked-in kids across selected branches.</div></div>
+      <div class="card"><div class="card-title">💵 Today's Revenue</div><div class="card-desc">Total income today. Can be hidden via Security Mode.</div></div>
+      <div class="card"><div class="card-title">📅 Yesterday's Revenue</div><div class="card-desc">Previous day comparison for quick trend reading.</div></div>
+      <div class="card"><div class="card-title">🧾 Average Bill</div><div class="card-desc">Mean transaction value for the selected period.</div></div>
+      <div class="card"><div class="card-title">⏱️ Avg Duration</div><div class="card-desc">Average play session duration in minutes.</div></div>
+      <div class="card"><div class="card-title">💳 Payment Breakdown</div><div class="card-desc">Split by Cash, GCash, Card, Maya, Bank Transfer, Other.</div></div>
+    </div>
+
+    <h3 style="margin:20px 0 10px;font-size:1rem;font-weight:700">Charts</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-title">📈 Monthly Revenue Trend</div><div class="card-desc">Month-over-month revenue comparison bar chart.</div></div>
+      <div class="card"><div class="card-title">📉 Daily Visits</div><div class="card-desc">Daily visit count line/bar chart for trend analysis.</div></div>
+    </div>
+
+    <div class="screenshot-grid">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-kpi-cards.png" alt="Admin Dashboard — KPI Cards" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Dashboard — KPI Cards</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-rev-visit-chart.png" alt="Admin Dashboard — Revenue &amp; Visits Charts" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Dashboard — Revenue &amp; Visits Charts</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-branch-filter.png" alt="Admin Dashboard — Branch Filter" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Dashboard — Branch Filter</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-security-hidden-metrics.png" alt="Admin Dashboard — Security Mode (Hidden Metrics)" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Dashboard — Security Mode (Hidden Metrics)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Branches -->
+  <section id="admin-branches" class="section">
+    <h2 class="section-title">Admin — Branches</h2>
+    <p class="section-subtitle">Create and manage all playground branch locations.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>List all branch locations with active/inactive status</li>
+      <li>Create new branch (name, address)</li>
+      <li>Edit branch details</li>
+      <li>Soft-delete / deactivate a branch</li>
+    </ul>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-branch-list.png" alt="Admin Branches — Branch List" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Branches — Branch List</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-create-branch.png" alt="Admin Branches — Create / Edit Branch Form" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Branches — Create / Edit Branch Form</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Employees -->
+  <section id="admin-employees" class="section">
+    <h2 class="section-title">Admin — Employees</h2>
+    <p class="section-subtitle">Staff account management and role assignment.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Create staff accounts with email, full name, role, and branch</li>
+      <li>Roles: <code>super_admin</code> or <code>branch_staff</code></li>
+      <li>Assign staff to specific branches</li>
+      <li>Activate or deactivate staff accounts</li>
+      <li>Set / reset staff passwords</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <div>Staff accounts are created via a secondary Supabase client (<code>signUpStaff()</code>) to avoid ending the admin's current session.</div>
+    </div>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-staff-list.png" alt="Admin Employees — Staff List" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Employees — Staff List</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-create-employee.png" alt="Admin Employees — Create / Edit Employee Form" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Employees — Create / Edit Employee Form</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Pricing -->
+  <section id="admin-pricing" class="section">
+    <h2 class="section-title">Admin — Pricing</h2>
+    <p class="section-subtitle">Configure play session pricing tiers per branch.</p>
+
+    <p style="color:var(--gray-700);font-size:0.9rem;margin-bottom:16px">
+      Each branch has independent pricing. Pricing is versioned with <code>effective_from</code>
+      dates so historical rates are preserved for reporting accuracy.
+    </p>
+
+    <table style="margin-bottom:20px">
+      <thead><tr><th>Tier</th><th>duration_minutes</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>30 minutes</td><td><code>30</code></td><td>Short play tier</td></tr>
+        <tr><td>1 hour</td><td><code>60</code></td><td>Standard tier</td></tr>
+        <tr><td>2 hours</td><td><code>120</code></td><td>Extended play</td></tr>
+        <tr><td>Unlimited</td><td><code>NULL</code></td><td>Full day / open-ended pass</td></tr>
+      </tbody>
+    </table>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-pricing-tier-list.png" alt="Admin Pricing — Pricing Tiers List" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Pricing — Pricing Tiers List</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-add-pricing.png" alt="Admin Pricing — Add / Edit Pricing Tier Form" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Pricing — Add / Edit Pricing Tier Form</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Reports -->
+  <section id="admin-reports" class="section">
+    <h2 class="section-title">Admin — Reports</h2>
+    <p class="section-subtitle">Generate and export PDF reports for any custom date range.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Custom date range selection via calendar picker</li>
+      <li>Session breakdown: check-in/out times, duration, revenue, discounts</li>
+      <li>Sock sales summary per variant</li>
+      <li>Staff on duty listing</li>
+      <li>Payment method breakdown</li>
+      <li>PDF export via Expo Print API and system share sheet</li>
+    </ul>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-report-date-range-picker.png" alt="Admin Reports — Date Range Picker" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Reports — Date Range Picker</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/admin-report-preview.png" alt="Admin Reports — Report Preview / PDF Output" />
+          <span class="screenshot-tag admin">Admin</span>
+        </div>
+        <div class="screenshot-caption">Admin Reports — Report Preview / PDF Output</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BRANCH APP ════════════════════════════════════════════════ -->
+  <section id="branch-overview" class="section">
+    <h2 class="section-title" style="color:var(--cyan-dark)">🔵 Branch App</h2>
+    <p class="section-subtitle">Frontline operations app for branch staff.</p>
+
+    <div class="card" style="border-left:4px solid var(--cyan)">
+      <div class="card-title">Bundle: <code>com.kidzia.branch</code> &nbsp;·&nbsp; Theme: Cyan (#0ea5e9)</div>
+      <div class="card-desc">Runs on iOS, Android, and Web. Accessible only to <code>branch_staff</code> role. Includes Firebase push notification support.</div>
+    </div>
+
+    <h3 style="margin:20px 0 12px;font-size:1.05rem;font-weight:700">Branch Staff Features</h3>
+    <ul class="feature-list">
+      <li>Check kids in with full info (name, age, parent, emergency contact)</li>
+      <li>Real-time session timer with visual countdown per kid</li>
+      <li>Multiple pricing tiers + promo pricing (50% off, PWD discounts)</li>
+      <li>Loyalty card scanning with automatic discount calculation</li>
+      <li>Extend session duration mid-play</li>
+      <li>Revert checkout — undo accidental checkouts with full audit log</li>
+      <li>Socks point-of-sale with shopping cart and payment selection</li>
+      <li>Inventory tracking with receive / manual set / correction adjustments</li>
+      <li>Daily report generation and PDF sharing</li>
+      <li>Push notifications for session timeouts</li>
+    </ul>
+
+  </section>
+
+  <!-- Branch Login -->
+  <section id="branch-login" class="section">
+    <h2 class="section-title">Branch — Login</h2>
+    <p class="section-subtitle">Authentication screen for branch staff.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Email + password login via Supabase Auth</li>
+      <li>Accept invite link for new staff onboarding</li>
+      <li>Redirects to active sessions on successful login</li>
+      <li>Non-staff roles redirected to unauthorized page</li>
+    </ul>
+
+    <div class="screenshot screenshot-filled">
+      <div class="screenshot-inner">
+        <img src="screenshot/branch-login-screen.png" alt="Branch — Login Screen" />
+        <span class="screenshot-tag branch">Branch</span>
+      </div>
+      <div class="screenshot-caption">Branch — Login Screen</div>
+    </div>
+  </section>
+
+  <!-- Branch Active Sessions -->
+  <section id="branch-active" class="section">
+    <h2 class="section-title">Branch — Active Sessions</h2>
+    <p class="section-subtitle">Live view of all currently checked-in kids with timers and quick actions.</p>
+
+    <table style="margin-bottom:20px">
+      <thead><tr><th>Action</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>⏱️ Live Timer</td><td>Real-time countdown per session based on the purchased tier duration</td></tr>
+        <tr><td>➕ Extend</td><td>Add more time by selecting a new duration tier mid-session</td></tr>
+        <tr><td>✅ Check Out</td><td>Opens checkout form — scan loyalty card, pick payment method, confirm total</td></tr>
+        <tr><td>↩️ Revert</td><td>Undo a completed checkout — restores session to active with full audit log</td></tr>
+      </tbody>
+    </table>
+
+    <div class="screenshot-grid">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-active-session-list.png" alt="Active Sessions — Session List with Live Timers" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Active Sessions — Session List with Live Timers</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-active-session-checkout.png" alt="Active Sessions — Checkout Form" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Active Sessions — Checkout Form</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-active-session-extend.png" alt="Active Sessions — Extend Session" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Active Sessions — Extend Session</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-active-session-revert-checkout.png" alt="Active Sessions — Revert Checkout Confirmation" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Active Sessions — Revert Checkout Confirmation</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Branch Check-in -->
+  <section id="branch-checkin" class="section">
+    <h2 class="section-title">Branch — Check-in</h2>
+    <p class="section-subtitle">Register a new kid and start their play session.</p>
+
+    <table style="margin-bottom:20px">
+      <thead><tr><th>Field</th><th>Required</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Kid Name</td><td>✅ Yes</td><td>Auto-fills from previous sessions</td></tr>
+        <tr><td>Kid Age</td><td>✅ Yes</td><td>Numeric input</td></tr>
+        <tr><td>Parent Name</td><td>✅ Yes</td><td></td></tr>
+        <tr><td>Parent Contact</td><td>✅ Yes</td><td>Phone number</td></tr>
+        <tr><td>Emergency Contact</td><td>Optional</td><td>Alternative contact person</td></tr>
+        <tr><td>Notes</td><td>Optional</td><td>Special requests or conditions</td></tr>
+        <tr><td>Pricing Tier</td><td>✅ Yes</td><td>30 min / 1 hr / 2 hrs / Unlimited</td></tr>
+        <tr><td>Promo Type</td><td>Optional</td><td>Regular / 50% Off / PWD / 50%+PWD</td></tr>
+      </tbody>
+    </table>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-checkin-form-1.png" alt="Check-in — Kid &amp; Parent Info Form" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Check-in — Kid &amp; Parent Info Form</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-checkin-pricing-tier-selection.png" alt="Check-in — Pricing Tier &amp; Promo Selection" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Check-in — Pricing Tier &amp; Promo Selection</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Branch History -->
+  <section id="branch-history" class="section">
+    <h2 class="section-title">Branch — History</h2>
+    <p class="section-subtitle">Today's completed sessions log.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>All checked-out sessions for the current day</li>
+      <li>Session details: kid name, check-in/out times, duration, total revenue</li>
+      <li>Payment method and discounts visible per entry</li>
+    </ul>
+
+    <div class="screenshot screenshot-filled">
+      <div class="screenshot-inner">
+        <img src="screenshot/branch-history-competed-session.png" alt="History — Completed Sessions List" />
+        <span class="screenshot-tag branch">Branch</span>
+      </div>
+      <div class="screenshot-caption">History — Completed Sessions List</div>
+    </div>
+  </section>
+
+  <!-- Branch Socks POS -->
+  <section id="branch-socks" class="section">
+    <h2 class="section-title">Branch — Socks POS</h2>
+    <p class="section-subtitle">Point-of-sale for sock merchandise with shopping cart.</p>
+
+    <h3 style="margin-bottom:10px;font-size:1rem;font-weight:700">Sock Variants (₱20 each)</h3>
+    <div class="badge-list" style="margin-bottom:20px">
+      <span class="badge badge-gray">Baby Boys</span>
+      <span class="badge badge-gray">Baby Girls</span>
+      <span class="badge badge-gray">Kids Boys</span>
+      <span class="badge badge-gray">Kids Girls</span>
+      <span class="badge badge-gray">Adult Men</span>
+      <span class="badge badge-gray">Adult Women</span>
+    </div>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Add variants to shopping cart with quantity adjustment</li>
+      <li>Remove items from cart</li>
+      <li>Select payment method (Cash, GCash, Card, Maya, etc.)</li>
+      <li>Submit sale — deducts from stock automatically</li>
+      <li>Daily sales summary with per-variant breakdown</li>
+      <li>Revenue tracked per payment method</li>
+    </ul>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-pos-selection-cart.png" alt="Socks POS — Product Selection &amp; Cart" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Socks POS — Product Selection &amp; Cart</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-sock-pos-daily-sales-summary.png" alt="Socks POS — Daily Sales Summary" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Socks POS — Daily Sales Summary</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Branch Stocks -->
+  <section id="branch-stocks" class="section">
+    <h2 class="section-title">Branch — Stocks</h2>
+    <p class="section-subtitle">Real-time sock inventory management and adjustment tracking.</p>
+
+    <table style="margin-bottom:20px">
+      <thead><tr><th>Adjustment Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>receive</code></td><td>New stock received from supplier</td></tr>
+        <tr><td><code>manual_set</code></td><td>Manual count override (physical stock count)</td></tr>
+        <tr><td><code>sale</code></td><td>Auto-deducted when a POS transaction is completed</td></tr>
+        <tr><td><code>correction</code></td><td>Error correction adjustments</td></tr>
+      </tbody>
+    </table>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Real-time stock levels per variant</li>
+      <li>Low stock alert visual indicator (threshold: &lt;10 units)</li>
+      <li>Stock adjustment form with type and optional notes</li>
+      <li>Full adjustment history log with timestamps and staff attribution</li>
+    </ul>
+
+    <div class="screenshot-grid">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-stocks-inventory-levels-per-variant.png" alt="Stocks — Inventory Levels Per Variant" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Stocks — Inventory Levels Per Variant</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-stock-low-alert.png" alt="Stocks — Low Stock Alert" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Stocks — Low Stock Alert</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-stocks-adjustment.png" alt="Stocks — Stock Adjustment Form" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Stocks — Stock Adjustment Form</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-stocks-adjustment-history.png" alt="Stocks — Adjustment History Log" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Stocks — Adjustment History Log</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Branch Reports -->
+  <section id="branch-reports" class="section">
+    <h2 class="section-title">Branch — Reports</h2>
+    <p class="section-subtitle">Comprehensive daily report with PDF export and sharing.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Full daily session list with check-in/out times and duration</li>
+      <li>Sock sales transactions breakdown per variant</li>
+      <li>Staff on duty for the day</li>
+      <li>Payment method totals (Cash, GCash, Card, Maya, etc.)</li>
+      <li>Total revenue and total discounts applied</li>
+      <li>Export via system share sheet using Expo Print + Share APIs</li>
+    </ul>
+
+    <div class="screenshot-grid cols-2">
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-daily-reports.png" alt="Branch Reports — Daily Report Summary Screen" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Branch Reports — Daily Report Summary Screen</div>
+      </div>
+
+      <div class="screenshot screenshot-filled">
+        <div class="screenshot-inner">
+          <img src="screenshot/branch-report-export.png" alt="Branch Reports — PDF Export / Share Sheet" />
+          <span class="screenshot-tag branch">Branch</span>
+        </div>
+        <div class="screenshot-caption">Branch Reports — PDF Export / Share Sheet</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DATABASE SCHEMA ═══════════════════════════════════════════ -->
+  <section id="database" class="section">
+    <h2 class="section-title">Database Schema</h2>
+    <p class="section-subtitle">All PostgreSQL tables managed via Supabase.</p>
+
+    <div class="screenshot">
+      <input type="file" accept="image/*" title="Upload screenshot" />
+      <div class="screenshot-icon">🗄️</div>
+      <div class="screenshot-label">Supabase — Database Tables Overview</div>
+      <div class="screenshot-hint">Click to upload a screenshot of the Supabase dashboard showing all tables</div>
+      <span class="screenshot-tag shared">DB</span>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">🏢 branches</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">id</span><span class="field-type">uuid PK</span><span class="field-desc">Auto-generated primary key</span></div>
+        <div class="db-field"><span class="field-name">name</span><span class="field-type">text</span><span class="field-desc">Branch display name</span></div>
+        <div class="db-field"><span class="field-name">address</span><span class="field-type">text</span><span class="field-desc">Physical address</span></div>
+        <div class="db-field"><span class="field-name">is_active</span><span class="field-type">boolean</span><span class="field-desc">Soft-delete flag</span></div>
+        <div class="db-field"><span class="field-name">created_at</span><span class="field-type">timestamptz</span><span class="field-desc">Creation timestamp</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">👤 profiles</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">id</span><span class="field-type">uuid PK FK</span><span class="field-desc">References auth.users</span></div>
+        <div class="db-field"><span class="field-name">full_name</span><span class="field-type">text</span><span class="field-desc">Display name</span></div>
+        <div class="db-field"><span class="field-name">role</span><span class="field-type">enum</span><span class="field-desc">super_admin | branch_staff</span></div>
+        <div class="db-field"><span class="field-name">branch_id</span><span class="field-type">uuid FK?</span><span class="field-desc">Assigned branch (null for super_admin)</span></div>
+        <div class="db-field"><span class="field-name">is_active</span><span class="field-type">boolean</span><span class="field-desc">Account active flag</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">🎫 sessions</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">id</span><span class="field-type">uuid PK</span><span class="field-desc"></span></div>
+        <div class="db-field"><span class="field-name">branch_id</span><span class="field-type">uuid FK</span><span class="field-desc">Branch where session occurred</span></div>
+        <div class="db-field"><span class="field-name">kid_name</span><span class="field-type">text</span><span class="field-desc">Child's name</span></div>
+        <div class="db-field"><span class="field-name">kid_age</span><span class="field-type">integer</span><span class="field-desc">Child's age in years</span></div>
+        <div class="db-field"><span class="field-name">parent_name</span><span class="field-type">text</span><span class="field-desc">Parent/guardian name</span></div>
+        <div class="db-field"><span class="field-name">parent_contact</span><span class="field-type">text</span><span class="field-desc">Phone number</span></div>
+        <div class="db-field"><span class="field-name">check_in_at</span><span class="field-type">timestamptz</span><span class="field-desc">Session start time</span></div>
+        <div class="db-field"><span class="field-name">check_out_at</span><span class="field-type">timestamptz?</span><span class="field-desc">Session end time (null if active)</span></div>
+        <div class="db-field"><span class="field-name">duration_minutes</span><span class="field-type">integer?</span><span class="field-desc">Purchased tier (null = unlimited)</span></div>
+        <div class="db-field"><span class="field-name">rate_per_hour</span><span class="field-type">numeric</span><span class="field-desc">Rate at time of check-in</span></div>
+        <div class="db-field"><span class="field-name">base_amount</span><span class="field-type">numeric</span><span class="field-desc">Amount before discounts</span></div>
+        <div class="db-field"><span class="field-name">loyalty_card_id</span><span class="field-type">uuid FK?</span><span class="field-desc">Applied loyalty card</span></div>
+        <div class="db-field"><span class="field-name">discount_amount</span><span class="field-type">numeric</span><span class="field-desc">Amount discounted</span></div>
+        <div class="db-field"><span class="field-name">total_amount</span><span class="field-type">numeric</span><span class="field-desc">Final amount charged</span></div>
+        <div class="db-field"><span class="field-name">payment_method</span><span class="field-type">enum</span><span class="field-desc">cash | gcash | card | maya | bank_transfer | other</span></div>
+        <div class="db-field"><span class="field-name">payment_status</span><span class="field-type">enum</span><span class="field-desc">pending | paid</span></div>
+        <div class="db-field"><span class="field-name">expo_push_token</span><span class="field-type">text?</span><span class="field-desc">Device token for timeout notifications</span></div>
+        <div class="db-field"><span class="field-name">checked_in_by</span><span class="field-type">uuid FK</span><span class="field-desc">Staff who checked in</span></div>
+        <div class="db-field"><span class="field-name">checked_out_by</span><span class="field-type">uuid FK?</span><span class="field-desc">Staff who checked out</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">💳 loyalty_cards</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">id</span><span class="field-type">uuid PK</span><span class="field-desc"></span></div>
+        <div class="db-field"><span class="field-name">card_number</span><span class="field-type">text UNIQUE</span><span class="field-desc">Unique card identifier for scanning</span></div>
+        <div class="db-field"><span class="field-name">holder_name</span><span class="field-type">text</span><span class="field-desc">Card holder's name</span></div>
+        <div class="db-field"><span class="field-name">discount_percentage</span><span class="field-type">integer</span><span class="field-desc">Discount 0–100%</span></div>
+        <div class="db-field"><span class="field-name">is_active</span><span class="field-type">boolean</span><span class="field-desc">Card active flag</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">💰 pricing_configs</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">id</span><span class="field-type">uuid PK</span><span class="field-desc"></span></div>
+        <div class="db-field"><span class="field-name">branch_id</span><span class="field-type">uuid FK</span><span class="field-desc">Branch this pricing belongs to</span></div>
+        <div class="db-field"><span class="field-name">duration_minutes</span><span class="field-type">integer?</span><span class="field-desc">NULL = unlimited tier</span></div>
+        <div class="db-field"><span class="field-name">rate_per_hour</span><span class="field-type">numeric</span><span class="field-desc">Price for this tier</span></div>
+        <div class="db-field"><span class="field-name">effective_from</span><span class="field-type">date</span><span class="field-desc">Versioned pricing start date</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">🧦 Socks Tables (sock_variants, sock_stock, sock_sales, sock_sale_items, sock_stock_adjustments, sock_daily_summaries)</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">sock_variants</span><span class="field-type">table</span><span class="field-desc">6 pre-seeded variants: Baby/Kids/Adult × Boys/Girls, ₱20 each</span></div>
+        <div class="db-field"><span class="field-name">sock_stock</span><span class="field-type">table</span><span class="field-desc">Current stock quantity per branch per variant</span></div>
+        <div class="db-field"><span class="field-name">sock_sales</span><span class="field-type">table</span><span class="field-desc">POS transaction header (total, payment method, sold_at, sold_by)</span></div>
+        <div class="db-field"><span class="field-name">sock_sale_items</span><span class="field-type">table</span><span class="field-desc">Line items per sale (variant, qty, unit_price, subtotal)</span></div>
+        <div class="db-field"><span class="field-name">sock_stock_adjustments</span><span class="field-type">table</span><span class="field-desc">Full log of all stock changes (type, qty_before, qty_change, qty_after, note)</span></div>
+        <div class="db-field"><span class="field-name">sock_daily_summaries</span><span class="field-type">table</span><span class="field-desc">Daily summary with variant_breakdown and payment_breakdown as JSONB</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">📋 branch_daily_reports</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">branch_id + report_date</span><span class="field-type">composite</span><span class="field-desc">One report per branch per day</span></div>
+        <div class="db-field"><span class="field-name">total_sessions</span><span class="field-type">integer</span><span class="field-desc">Number of play sessions</span></div>
+        <div class="db-field"><span class="field-name">checkin_revenue</span><span class="field-type">numeric</span><span class="field-desc">Revenue from play sessions</span></div>
+        <div class="db-field"><span class="field-name">total_discounts</span><span class="field-type">numeric</span><span class="field-desc">Total discounts applied</span></div>
+        <div class="db-field"><span class="field-name">socks_revenue</span><span class="field-type">numeric</span><span class="field-desc">Revenue from sock sales</span></div>
+        <div class="db-field"><span class="field-name">total_revenue</span><span class="field-type">numeric</span><span class="field-desc">checkin_revenue + socks_revenue</span></div>
+        <div class="db-field"><span class="field-name">staff_on_duty</span><span class="field-type">jsonb[]</span><span class="field-desc">Array of staff who worked that day</span></div>
+        <div class="db-field"><span class="field-name">session_breakdown</span><span class="field-type">jsonb</span><span class="field-desc">Full session list with details</span></div>
+        <div class="db-field"><span class="field-name">payment_breakdown</span><span class="field-type">jsonb</span><span class="field-desc">Totals per payment method</span></div>
+      </div>
+    </div>
+
+    <div class="db-entity">
+      <div class="db-entity-header">↩️ checkout_revert_log</div>
+      <div class="db-entity-fields">
+        <div class="db-field"><span class="field-name">session_id</span><span class="field-type">uuid FK</span><span class="field-desc">Session that was reverted</span></div>
+        <div class="db-field"><span class="field-name">reverted_by</span><span class="field-type">uuid FK</span><span class="field-desc">Staff who performed the revert</span></div>
+        <div class="db-field"><span class="field-name">original_checkout_at</span><span class="field-type">timestamptz</span><span class="field-desc">Timestamp of the reverted checkout</span></div>
+        <div class="db-field"><span class="field-name">original_total_amount</span><span class="field-type">numeric</span><span class="field-desc">Amount from the reverted checkout</span></div>
+        <div class="db-field"><span class="field-name">reverted_at</span><span class="field-type">timestamptz</span><span class="field-desc">When the revert was performed</span></div>
+        <div class="db-field"><span class="field-name">notes</span><span class="field-type">text?</span><span class="field-desc">Reason for reversion</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MIGRATIONS ════════════════════════════════════════════════ -->
+  <section id="migrations" class="section">
+    <h2 class="section-title">Database Migrations</h2>
+    <p class="section-subtitle">Incremental SQL migrations in <code>supabase/migrations/</code>.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-title">0001 — Initial Schema</div>
+        <div class="timeline-desc">Core tables: branches, profiles, pricing_configs, loyalty_cards, sessions</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0002 — Pricing Duration Tiers</div>
+        <div class="timeline-desc">Adds <code>duration_minutes</code> to pricing_configs for tiered pricing</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0003 — Push Notifications</div>
+        <div class="timeline-desc">Adds <code>expo_push_token</code> and <code>end_time</code> fields to sessions</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0004 — Payment Methods &amp; Fixed Price</div>
+        <div class="timeline-desc">Adds <code>payment_method</code> enum, refactors pricing model</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0005 — Drop Old Checkout Overload</div>
+        <div class="timeline-desc">Cleans up deprecated <code>checkout_session</code> function overload</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0006 — Socks POS</div>
+        <div class="timeline-desc">Adds sock_variants, sock_stock, sock_sales, sock_sale_items, sock_daily_summaries</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0007 — Stock Adjustments</div>
+        <div class="timeline-desc">Adds <code>sock_stock_adjustments</code> table for full inventory audit trail</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0008 — Branch Daily Reports</div>
+        <div class="timeline-desc">Adds <code>branch_daily_reports</code> table for consolidated end-of-day reporting</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0009 — Revert Checkout</div>
+        <div class="timeline-desc">Adds <code>checkout_revert_log</code> and <code>revert_checkout()</code> PostgreSQL function</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-title">0010 — Revert Checkout (No Window)</div>
+        <div class="timeline-desc">Refines <code>revert_checkout()</code> — removes time-window restrictions on reverts</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DB FUNCTIONS ══════════════════════════════════════════════ -->
+  <section id="db-functions" class="section">
+    <h2 class="section-title">Database Functions</h2>
+    <p class="section-subtitle">PostgreSQL stored functions for complex atomic operations.</p>
+
+    <div class="card">
+      <div class="card-title">⚡ checkout_session()</div>
+      <pre><code>checkout_session(
+  p_session_id       uuid,
+  p_loyalty_card_num text?,
+  p_checked_out_by   uuid?
+)
+→ { success: bool, message: text, total_amount: numeric }</code></pre>
+      <div class="card-desc" style="margin-top:8px">
+        Calculates actual play duration, looks up loyalty card discount, marks payment_status as 'paid',
+        and returns the final charged amount. Executes atomically in a single DB call.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ get_current_rate()</div>
+      <pre><code>get_current_rate(p_branch_id uuid)
+→ numeric   -- current rate_per_hour for the branch</code></pre>
+      <div class="card-desc" style="margin-top:8px">
+        Returns the most recent active pricing rate for a branch based on <code>effective_from</code> date.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ revert_checkout()</div>
+      <pre><code>revert_checkout(
+  p_session_id  uuid,
+  p_reverted_by uuid
+)
+→ { success: bool, message: text }</code></pre>
+      <div class="card-desc" style="margin-top:8px">
+        Reverts a completed checkout — clears <code>check_out_at</code>, resets all payment fields back
+        to pending, and writes a full audit entry to <code>checkout_revert_log</code>. No time-window restriction.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ AUTH & SECURITY ══════════════════════════════════════════ -->
+  <section id="auth" class="section">
+    <h2 class="section-title">Auth &amp; Security</h2>
+    <p class="section-subtitle">Role-based access control, RLS policies, and session persistence.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">🔑 Authentication</div>
+        <div class="card-desc">Supabase Auth with email/password. JWTs are persisted in <code>expo-secure-store</code> using a chunked adapter to work around the 2KB per-key limit.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛡️ Row-Level Security</div>
+        <div class="card-desc">All tables have RLS enabled. Branch staff can only access data for their own branch. Super admins have broader cross-branch access.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">👮 Role Guards</div>
+        <div class="card-desc">Both apps read the user's <code>role</code> from the <code>profiles</code> table after login and redirect unauthorized roles to a dedicated Unauthorized screen.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔒 Staff Creation</div>
+        <div class="card-desc">Admin uses a secondary Supabase client (<code>signUpStaff()</code>) to create staff accounts without ending the current admin session.</div>
+      </div>
+    </div>
+
+    <h3 style="margin:20px 0 10px;font-size:1rem;font-weight:700">User Roles</h3>
+    <table>
+      <thead><tr><th>Role</th><th>App Access</th><th>Capabilities</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>super_admin</code></td>
+          <td>Admin App only</td>
+          <td>All branches, employees, pricing, cross-branch analytics, custom date range reports</td>
+        </tr>
+        <tr>
+          <td><code>branch_staff</code></td>
+          <td>Branch App only</td>
+          <td>Check in/out kids, sell socks, manage stock, generate daily branch report for their branch</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+  <!-- ══ NOTIFICATIONS ════════════════════════════════════════════ -->
+  <section id="notifications" class="section">
+    <h2 class="section-title">Push Notifications</h2>
+    <p class="section-subtitle">Firebase-powered push alerts for session timeouts.</p>
+
+    <ul class="feature-list" style="margin-bottom:20px">
+      <li>Expo push token captured at check-in and stored in the session row</li>
+      <li>Notifications triggered when a session timer is about to expire</li>
+      <li>Foreground notification handler always shows alert banners in-app</li>
+      <li>Tapping a notification navigates directly to the Active Sessions tab</li>
+      <li>Firebase Cloud Messaging (FCM) delivery via <code>google-services.json</code></li>
+      <li>Expo Notifications API for cross-platform (iOS + Android) delivery</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <div>Push tokens are stored per-session (not per-user), allowing notifications to target the specific device that checked in a particular child.</div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <div class="divider"></div>
+  <div style="text-align:center;color:var(--gray-400);font-size:0.8rem;padding:24px 0 40px">
+    Kidzia Kiddie Playground &nbsp;·&nbsp; Internal Documentation &nbsp;·&nbsp;
+    Built with React Native, Expo &amp; Supabase
+  </div>
+
+</main>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════════════════ -->
+<script>
+  /* Active nav link on scroll */
+  const links = document.querySelectorAll('.nav-link[href^="#"]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -75% 0px' });
+  document.querySelectorAll('.section[id]').forEach(s => io.observe(s));
+
+  /* Screenshot image preview on file upload */
+  function attachUpload(placeholder) {
+    const input = placeholder.querySelector('input[type="file"]');
+    if (!input) return;
+    input.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const tag = placeholder.querySelector('.screenshot-tag');
+        const tagHTML = tag ? tag.outerHTML : '';
+        placeholder.innerHTML = `
+          <img src="${e.target.result}" alt="Screenshot"
+               style="max-width:100%;border-radius:8px;display:block;" />
+          ${tagHTML}
+          <input type="file" accept="image/*" title="Replace screenshot"
+                 style="position:absolute;inset:0;opacity:0;cursor:pointer;" />
+        `;
+        attachUpload(placeholder);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  document.querySelectorAll('.screenshot').forEach(attachUpload);
+</script>
+
+</body>
+</html>
